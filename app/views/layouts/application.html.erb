@@ -5,33 +5,27 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"></link>
 </head>
-<body>
+<body class="<%= controller_name %>">
 
     <div class="site-wrapper">
         <div class="site-wrapper-inner">
             <div class="cover-container">
+                <div class="masthead clearfix">
                 <%= render 'layouts/nav' %>
-
-                <div class="inner cover">
-                    <h1 class="cover-heading">Cover your page.</h1>
-                    <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
-                    <p class="lead">
-                    <a href="#" class="btn btn-lg btn-default">Learn more</a>
-                    </p>
                 </div>
-                <%= yield %>
+                <div class="inner cover">
+                    <%= yield %>
+                </div>
                 <div class="mastfoot">
                     <div class="inner">
                         <p>Cover template for <a href="http://getbootstrap.com">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
                     </div>
                 </div>
 
-
-
             </div>
         </div>
     </div>
-
 </body>
 </html>

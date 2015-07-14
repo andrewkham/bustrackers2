@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
+  get 'tracker/map'
+
+  get 'tracker/info'
+
   get 'pages/index'
-  get '/map' => 'pages#map'
+  get '/map' => 'tracker#map'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
