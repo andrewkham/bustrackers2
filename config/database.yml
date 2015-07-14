@@ -57,7 +57,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: bustrackers2_test
+  database: travis_ci_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -81,5 +81,5 @@ test:
 production:
   <<: *default
   database: bustrackers2_production
-  username: bustrackers2
+  username: rails
   password: <%= ENV['BUSTRACKERS2_DATABASE_PASSWORD'] %>
