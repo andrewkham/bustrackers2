@@ -21,6 +21,9 @@
 
 // google.maps.event.addDomListener(window, 'page:load', initialize);
 var my_map;
+var stopMarker;
+var myRoute;
+var busIDs;
 
 function selectRoute(){
   document.getElementById('submitText').addEventListener("click", submitRoute);
@@ -62,15 +65,53 @@ function getStopsData(x) {
 
 function submitRoute() {
   var myRoute = document.getElementById('inputText').value;
-  getStopsData(myRoute);
+  // getStopsData(myRoute);
+  getRouteBus(myRoute);
+  document.getElementById('inputText').value = "";
 };
+
+function getRouteBus(x){
+  var routeBuses = [];
+  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + x + ".json", {
+    success: function(data) {
+      routeBuses = data;
+      busIDs = Object.keys(routeBuses)
+      console.log(busIDs)
+      getBusData()
+    }
+  })
+
+}
+
+function getBusData(){
+  var buses = [];
+  for(i=0; i<busIDs.length; i++){
+    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles/" + busIDs[i] + ".json", {
+      success: function(data2) {
+        buses = data2;
+        console.log(buses.lat, buses.lon)
+
+        var busPositions = new google.maps.LatLng(buses.lat, buses.lon);
+
+        var busMarker = new google.maps.Marker({
+          position: busPositions,
+          icon: '/assets/bus_icon.png'
+        });
+
+        busMarker.setMap(my_map);
+
+      }
+    })
+  }
+
+}
 
 // Initialize Google Map
 function initialize() {
 
   // Define mapProperties
   var mapProperties = {
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: google.maps.MapTypeId.TERRAIN,
     center: new google.maps.LatLng(34.0218628, -118.4804206),
     zoom: 12
   }
