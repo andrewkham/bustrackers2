@@ -22,12 +22,16 @@
 // google.maps.event.addDomListener(window, 'page:load', initialize);
 
 // Setting global variables
-
 var my_map;
+var stopMarkersArray = [];
 var busMarkersArray = [];
+var stopMarker;
 var busMarker;
 var myRoute;
 var busIDs;
+var buses =[];
+var routeBuses = [];
+var validBusIDs = [];
 
 // Function to call submitRoute function upon click of submit button
 function selectRoute(){
@@ -37,36 +41,48 @@ function selectRoute(){
 // Function to run upon click of submit button
 function submitRoute() {
   // Defining myRoute as input text value
-  var myRoute = document.getElementById('inputText').value;
+  myRoute = document.getElementById('inputText').value;
   // Run getRouteBus if busMarker is undefined
   if (busMarker == undefined) {
-    getRouteBus(myRoute);
+    getRouteBus();
     // Resets search box to blank
     document.getElementById('inputText').value = "";
-  // Clear markers and set marker array to empty if busMarker is defined and run functions for newly input route
+    // Clear markers and set marker array to empty if busMarker is defined and run functions for newly input route
   } else {
     for(i=0; i<busMarkersArray.length; i++){
       busMarkersArray[i].setMap(null);
     }
     busMarkersArray = [];
-    getRouteBus(myRoute);
+    getRouteBus();
+    document.getElementById('inputText').value = "";
+  }
+
+  if (stopMarker == undefined) {
+    getStopsData();
+    document.getElementById('inputText').value = "";
+  } else {
+    for(i=0; i<stopMarkersArray.length; i++){
+      stopMarkersArray[i].setMap(null);
+    }
+    stopMarkersArray = [];
+    getStopsData();
     document.getElementById('inputText').value = "";
   }
 };
 
 // Function to get stops data via API call, to call specified URL based on textbox input value
-function getStopsData(x) {
+function getStopsData() {
   //API call for stops
   var stops = [];
-  $.ajax("http://api.metro.net/agencies/lametro/routes/" + x + "/stops/", {
+  $.ajax("http://api.metro.net/agencies/lametro/routes/" + myRoute + "/stops/", {
     success: function(data) {
       stops = data;
-      console.log(stops.items[0].latitude);
+      // console.log(stops.items[0].latitude);
       // For loop to gather latlongs of stops
       for (var i = 0; i < stops.items.length; i++) {
         var stopPositions = new google.maps.LatLng(stops.items[i].latitude, stops.items[i].longitude);
         // Marker definition based on latlongs of stops
-        var stopMarker = new google.maps.Marker({
+        stopMarker = new google.maps.Marker({
           position: stopPositions,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
@@ -78,6 +94,7 @@ function getStopsData(x) {
         });
         // Setting markers for stops
         stopMarker.setMap(my_map);
+        stopMarkersArray.push(stopMarker);
       }
     }
 
@@ -85,15 +102,14 @@ function getStopsData(x) {
 }
 
 //Function to store the bus IDs associated with searched routes into an array
-function getRouteBus(x){
-  var routeBuses = [];
-  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + x + ".json", {
+function getRouteBus(){
+  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
     success: function(data) {
       routeBuses = data;
       busIDs = Object.keys(routeBuses)
-      console.log(busIDs)
       // Runs getBusData immediately
       getBusData()
+      console.log(busIDs)
     }
   })
 
@@ -101,22 +117,64 @@ function getRouteBus(x){
 
 // Function to pull lat longs of buses defined by RouteBus function
 function getBusData(){
-  var buses = [];
-  for(i=0; i<busIDs.length; i++){
-    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles/" + busIDs[i] + ".json", {
+  $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles.json", {
+    success: function(data) {
+      buses = data;
+      for(i=0; i<busIDs.length; i++){
+        if(buses[busIDs[i]] !== undefined){
+          validBusIDs.push(buses[busIDs[i]].id);
+          var busPositions = new google.maps.LatLng(buses[busIDs[i]].lat, buses[busIDs[i]].lon)
+          busMarker = new google.maps.Marker({
+            position: busPositions,
+            icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
+          });
+          busMarker.setMap(my_map);
+          busMarkersArray.push(busMarker);
+          resetMarkers();
+        }
+      }
+      console.log(validBusIDs)
+    }
+  })
+}
+
+function resetMarkers() {
+
+  setInterval(function(){
+
+    $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
+      success: function(data) {
+        routeBuses = data;
+        busIDs = Object.keys(routeBuses)
+      }
+    });
+
+    for(i=0; i<busMarkersArray.length; i++){
+      busMarkersArray[i].setMap(null);
+    }
+
+    busMarkersArray = [];
+    buses = [];
+    validBusIDs = [];
+
+    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles.json", {
       success: function(data2) {
         buses = data2;
-        var busPositions = new google.maps.LatLng(buses.lat, buses.lon);
-        busMarker = new google.maps.Marker({
-          position: busPositions,
-          icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses.id + '|ffd700|800080'
-        });
-        busMarker.setMap(my_map);
-        busMarkersArray.push(busMarker);
+        for(i=0; i<busIDs.length; i++){
+          if(buses[busIDs[i]] !== undefined){
+            validBusIDs.push(buses[busIDs[i]].id);
+            var busPositions = new google.maps.LatLng(buses[busIDs[i]].lat, buses[busIDs[i]].lon)
+            busMarker = new google.maps.Marker({
+              position: busPositions,
+              icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
+            });
+            busMarker.setMap(my_map);
+            busMarkersArray.push(busMarker);
+          }
+        }
       }
     })
-  }
-
+  },20000)
 }
 
 // Initialize Google Map
