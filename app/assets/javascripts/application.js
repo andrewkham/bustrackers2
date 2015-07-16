@@ -22,6 +22,7 @@
 // google.maps.event.addDomListener(window, 'page:load', initialize);
 
 // Setting global variables
+
 var my_map;
 var busMarkersArray = [];
 var busMarker;
@@ -40,6 +41,7 @@ function submitRoute() {
   // Run getRouteBus if busMarker is undefined
   if (busMarker == undefined) {
     getRouteBus(myRoute);
+    // Resets search box to blank
     document.getElementById('inputText').value = "";
   // Clear markers and set marker array to empty if busMarker is defined and run functions for newly input route
   } else {
@@ -123,8 +125,8 @@ function initialize() {
   // Define mapProperties
   var mapProperties = {
     mapTypeId: google.maps.MapTypeId.TERRAIN,
-    center: new google.maps.LatLng(34.0218628, -118.4804206),
-    zoom: 12
+    center: new google.maps.LatLng(34.0500, -118.2500),
+    zoom: 11
   }
   // Define my_map to be map rendered on index page, labeled as "address-map"
   my_map = new google.maps.Map(document.getElementById("address-map"), mapProperties);
