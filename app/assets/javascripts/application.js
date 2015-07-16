@@ -20,16 +20,41 @@
 // The init function needs to run on load
 
 // google.maps.event.addDomListener(window, 'page:load', initialize);
-var my_map;
 
+// Setting global variables
+
+var my_map;
+var busMarkersArray = [];
+var busMarker;
+var myRoute;
+var busIDs;
+
+// Function to call submitRoute function upon click of submit button
 function selectRoute(){
   document.getElementById('submitText').addEventListener("click", submitRoute);
 };
 
-function getMap(my_map) {
-  return my_map;
-}
+// Function to run upon click of submit button
+function submitRoute() {
+  // Defining myRoute as input text value
+  var myRoute = document.getElementById('inputText').value;
+  // Run getRouteBus if busMarker is undefined
+  if (busMarker == undefined) {
+    getRouteBus(myRoute);
+    // Resets search box to blank
+    document.getElementById('inputText').value = "";
+  // Clear markers and set marker array to empty if busMarker is defined and run functions for newly input route
+  } else {
+    for(i=0; i<busMarkersArray.length; i++){
+      busMarkersArray[i].setMap(null);
+    }
+    busMarkersArray = [];
+    getRouteBus(myRoute);
+    document.getElementById('inputText').value = "";
+  }
+};
 
+// Function to get stops data via API call, to call specified URL based on textbox input value
 function getStopsData(x) {
   //API call for stops
   var stops = [];
@@ -37,10 +62,10 @@ function getStopsData(x) {
     success: function(data) {
       stops = data;
       console.log(stops.items[0].latitude);
-
+      // For loop to gather latlongs of stops
       for (var i = 0; i < stops.items.length; i++) {
         var stopPositions = new google.maps.LatLng(stops.items[i].latitude, stops.items[i].longitude);
-
+        // Marker definition based on latlongs of stops
         var stopMarker = new google.maps.Marker({
           position: stopPositions,
           icon: {
@@ -51,8 +76,7 @@ function getStopsData(x) {
             fillOpacity: 1,
           }
         });
-        console.log(stopMarker);
-        console.log(my_map)
+        // Setting markers for stops
         stopMarker.setMap(my_map);
       }
     }
@@ -60,19 +84,49 @@ function getStopsData(x) {
   });
 }
 
-function submitRoute() {
-  var myRoute = document.getElementById('inputText').value;
-  getStopsData(myRoute);
-};
+//Function to store the bus IDs associated with searched routes into an array
+function getRouteBus(x){
+  var routeBuses = [];
+  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + x + ".json", {
+    success: function(data) {
+      routeBuses = data;
+      busIDs = Object.keys(routeBuses)
+      console.log(busIDs)
+      // Runs getBusData immediately
+      getBusData()
+    }
+  })
+
+}
+
+// Function to pull lat longs of buses defined by RouteBus function
+function getBusData(){
+  var buses = [];
+  for(i=0; i<busIDs.length; i++){
+    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles/" + busIDs[i] + ".json", {
+      success: function(data2) {
+        buses = data2;
+        var busPositions = new google.maps.LatLng(buses.lat, buses.lon);
+        busMarker = new google.maps.Marker({
+          position: busPositions,
+          icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses.id + '|ffd700|800080'
+        });
+        busMarker.setMap(my_map);
+        busMarkersArray.push(busMarker);
+      }
+    })
+  }
+
+}
 
 // Initialize Google Map
 function initialize() {
 
   // Define mapProperties
   var mapProperties = {
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    center: new google.maps.LatLng(34.0218628, -118.4804206),
-    zoom: 12
+    mapTypeId: google.maps.MapTypeId.TERRAIN,
+    center: new google.maps.LatLng(34.0500, -118.2500),
+    zoom: 11
   }
   // Define my_map to be map rendered on index page, labeled as "address-map"
   my_map = new google.maps.Map(document.getElementById("address-map"), mapProperties);
