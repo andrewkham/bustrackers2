@@ -1,11 +1,14 @@
 <!-- Displays searchbar -->
-<div id="inputName">
+    <input type="text" id="inputText" placeholder="Search bus route" autofocus="true">
+    <input type="button" id="submitText" value="Submit">
+
+<!-- <div id="inputName">
     <div id="inputQuest">
         <h3>Search for your route</h3>
     </div>
     <input type="text" id="inputText" autofocus>
     <h1 id="submitText">submit</h1>
-</div>
+</div> -->
 
 <!-- Displays google map -->
 <div class="row">
@@ -13,6 +16,7 @@
     <div id="address-map" style="width: 100%; height: 600px;"></div>
   </div>
 </div>
+<script src="https://cdn.firebase.com/js/client/2.2.7/firebase.js"></script>
 <script type="text/javascript">
     google.maps.event.addDomListener(window, 'load', initialize);
 </script>
