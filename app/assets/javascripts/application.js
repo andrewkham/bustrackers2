@@ -26,23 +26,21 @@
 var my_map;
 var busMarkersArray = [];
 var busMarker;
-var myRoute;
-var busIDs;
 
 // Function to call submitRoute function upon click of submit button
 function selectRoute(){
-  document.getElementById('submitText').addEventListener("click", submitRoute);
+  $('#submitText').click(submitRoute);
 };
 
 // Function to run upon click of submit button
 function submitRoute() {
   // Defining myRoute as input text value
-  var myRoute = document.getElementById('inputText').value;
+  var myRoute = $('#inputText').val();
   // Run getRouteBus if busMarker is undefined
   if (busMarker == undefined) {
     getRouteBus(myRoute);
     // Resets search box to blank
-    document.getElementById('inputText').value = "";
+    var clearText = $('#inputText').val('');
   // Clear markers and set marker array to empty if busMarker is defined and run functions for newly input route
   } else {
     for(i=0; i<busMarkersArray.length; i++){
@@ -50,7 +48,7 @@ function submitRoute() {
     }
     busMarkersArray = [];
     getRouteBus(myRoute);
-    document.getElementById('inputText').value = "";
+    clearText;
   }
 };
 
@@ -85,31 +83,31 @@ function getStopsData(x) {
 }
 
 //Function to store the bus IDs associated with searched routes into an array
-function getRouteBus(x){
+function getRouteBus(mR){
   var routeBuses = [];
-  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + x + ".json", {
+  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + mR + ".json", {
     success: function(data) {
       routeBuses = data;
-      busIDs = Object.keys(routeBuses)
+      var busIDs = Object.keys(routeBuses)
       console.log(busIDs)
       // Runs getBusData immediately
-      getBusData()
+      getBusData(busIDs, mR)
     }
   })
 
 }
 
 // Function to pull lat longs of buses defined by RouteBus function
-function getBusData(){
+function getBusData(bI, mR){
   var buses = [];
-  for(i=0; i<busIDs.length; i++){
-    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles/" + busIDs[i] + ".json", {
-      success: function(data2) {
-        buses = data2;
+  for(i=0; i<bI.length; i++){
+    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles/" + bI[i] + ".json", {
+      success: function(data) {
+        buses = data;
         var busPositions = new google.maps.LatLng(buses.lat, buses.lon);
         busMarker = new google.maps.Marker({
           position: busPositions,
-          icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses.id + '|ffd700|800080'
+          icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + mR + '|ffd700|800080'
         });
         busMarker.setMap(my_map);
         busMarkersArray.push(busMarker);
