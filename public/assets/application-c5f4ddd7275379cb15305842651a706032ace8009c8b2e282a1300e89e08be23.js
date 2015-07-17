@@ -14052,7 +14052,7 @@ function getStopsData() {
 
 //Function to store the bus IDs associated with searched routes into an array
 function getRouteBus(){
-  $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
+  $.ajax("//publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
     success: function(data) {
       routeBuses = data;
       busIDs = Object.keys(routeBuses)
@@ -14066,7 +14066,7 @@ function getRouteBus(){
 
 // Function to pull lat longs of buses defined by RouteBus function
 function getBusData(){
-  $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles.json", {
+  $.ajax("//publicdata-transit.firebaseio.com/lametro/vehicles.json", {
     success: function(data) {
       buses = data;
       for(i=0; i<busIDs.length; i++){
@@ -14093,7 +14093,7 @@ function resetMarkers() {
 
     console.log("...and when we run this again in interval...")
 
-    $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
+    $.ajax("//publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
       success: function(data) {
         routeBuses = data;
         busIDs = Object.keys(routeBuses)
@@ -14110,7 +14110,7 @@ function resetMarkers() {
     buses = [];
     validBusIDs = [];
 
-    $.ajax("https://publicdata-transit.firebaseio.com/lametro/vehicles.json", {
+    $.ajax("//publicdata-transit.firebaseio.com/lametro/vehicles.json", {
       success: function(data2) {
         buses = data2;
         for(i=0; i<busIDs.length; i++){
