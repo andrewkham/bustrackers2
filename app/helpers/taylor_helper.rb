@@ -1,0 +1,2 @@
+module TaylorHelper
+end
