@@ -84,13 +84,7 @@ function getStopsData() {
         // Marker definition based on latlongs of stops
         stopMarker = new google.maps.Marker({
           position: stopPositions,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 3,
-            fillColor: '#FF0000',
-            strokeColor: '#FF0000',
-            fillOpacity: 1,
-          }
+          icon: '/assets/blue-bus-stop-hi.png'
         });
         // Setting markers for stops
         stopMarker.setMap(my_map);
@@ -109,7 +103,7 @@ function getRouteBus(){
       busIDs = Object.keys(routeBuses)
       // Runs getBusData immediately
       getBusData()
-      console.log(busIDs)
+      console.log("There are currently a total of" + " " + busIDs.length + " " + "bus IDs associated with route" + " " + myRoute + " " + ", which are:" + " " + busIDs)
     }
   })
 
@@ -130,10 +124,10 @@ function getBusData(){
           });
           busMarker.setMap(my_map);
           busMarkersArray.push(busMarker);
-          resetMarkers();
         }
       }
-      console.log(validBusIDs)
+      console.log("BUT...actually, there are only" + " " + validBusIDs.length + " " + "valid bus IDs that exist in /vehicles.json, which are:" + " " +  validBusIDs)
+      resetMarkers();
     }
   })
 }
@@ -142,12 +136,16 @@ function resetMarkers() {
 
   setInterval(function(){
 
+    console.log("...and when we run this again in interval...")
+
     $.ajax("https://publicdata-transit.firebaseio.com/lametro/routes/" + myRoute + ".json", {
       success: function(data) {
         routeBuses = data;
         busIDs = Object.keys(routeBuses)
       }
     });
+
+    console.log("...there are now" + " " + busIDs.length + " " + "bus IDs contained in the refreshed routes.json, which are:" + " " + busIDs)
 
     for(i=0; i<busMarkersArray.length; i++){
       busMarkersArray[i].setMap(null);
@@ -172,9 +170,10 @@ function resetMarkers() {
             busMarkersArray.push(busMarker);
           }
         }
+        console.log("...and only" + " " + validBusIDs.length + " " + "valid Bus IDs, which are NOW:" + " " + validBusIDs)
       }
     })
-  },20000)
+  }, 20000)
 }
 
 // Initialize Google Map
