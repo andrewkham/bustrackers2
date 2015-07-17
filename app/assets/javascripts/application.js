@@ -26,7 +26,7 @@ var my_map;
 var stopMarkersArray = [];
 var busMarkersArray = [];
 var stopMarker;
-var busMarker;
+var busMark/ander;
 var myRoute;
 var busIDs;
 var buses =[];
