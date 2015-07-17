@@ -74,7 +74,7 @@ function submitRoute() {
 function getStopsData() {
   //API call for stops
   var stops = [];
-  $.ajax("http://api.metro.net/agencies/lametro/routes/" + myRoute + "/stops/", {
+  $.ajax("//api.metro.net/agencies/lametro/routes/" + myRoute + "/stops/", {
     success: function(data) {
       stops = data;
       // console.log(stops.items[0].latitude);
@@ -136,7 +136,7 @@ function getBusData(){
           var busPositions = new google.maps.LatLng(buses[busIDs[i]].lat, buses[busIDs[i]].lon)
           busMarker = new google.maps.Marker({
             position: busPositions,
-            icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
+            icon: '//chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
           });
           busMarker.setMap(my_map);
           busMarkersArray.push(busMarker);
@@ -180,7 +180,7 @@ function resetMarkers() {
             var busPositions = new google.maps.LatLng(buses[busIDs[i]].lat, buses[busIDs[i]].lon)
             busMarker = new google.maps.Marker({
               position: busPositions,
-              icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
+              icon: '//chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|' + buses[busIDs[i]].id + '|ffd700|800080'
             });
             busMarker.setMap(my_map);
             busMarkersArray.push(busMarker);
