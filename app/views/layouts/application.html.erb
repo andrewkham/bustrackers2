@@ -12,18 +12,14 @@
 
     <div class="site-wrapper">
         <div class="site-wrapper-inner">
-            <div class="cover-container">
+            <!-- <div class="cover-container"> -->
                 <div class="masthead clearfix">
-                <%= render 'layouts/nav' %>
+                    <%= render 'layouts/nav' unless @disable_nav %>
+                    <%= render 'layouts/mapnav' if @disable_nav %>
                 </div>
                 <div class="inner cover">
                     <%= yield %>
-                </div>
-                <div class="mastfoot">
-                    <div class="inner">
-                        <p>Cover template for <a href="http://getbootstrap.com">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
-                    </div>
-                </div>
+                <!-- </div> -->
             </div>
         </div>
     </div>
