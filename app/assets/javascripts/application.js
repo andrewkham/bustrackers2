@@ -91,9 +91,25 @@ function getStopsData() {
         stopMarkersArray.push(stopMarker);
       }
     }
-
   });
 }
+
+// var infowindow = new google.maps.InfoWindow();
+//
+// google.maps.event.addListener(stopMarker, 'click', function(stopMarker, i) {
+//     return function (){
+//       var stopName = results[0].stops[i].name
+//       var secondsTillArrival = results[0].stops[i].seconds
+//       var direction = results[0].stops[i].direction
+//       if (results[0].stops[i].direction == null){
+//         var content = "<p><b>Stop Name:</b></p>" + '<p>'+stopName+'</p>' + "<p><b>Time till arrival(seconds):</b></p>" + '<p>'+secondsTillArrival+'</p>'
+//       } else {
+//         var content = "<p><b>Stop Name:</b></p>" + '<p>'+stopName+'</p>' + "<p><b>Time till arrival(seconds):</b></p>" + '<p>'+secondsTillArrival+'</p>' + "<p><b>Direction (next bus):</b></p>" + '<p>'+direction+'</p>'
+//       }
+//       infowindow.setContent(content);
+//       infowindow.open(my_map, marker);
+//     };
+// }(marker,i));
 
 //Function to store the bus IDs associated with searched routes into an array
 function getRouteBus(){
