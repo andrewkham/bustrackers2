@@ -74,6 +74,7 @@ function submitRoute() {
 function getStopsData() {
   //API call for stops
   var stops = [];
+  var stopId;
   $.ajax("http://api.metro.net/agencies/lametro/routes/" + myRoute + "/stops/", {
     success: function(data) {
       stops = data;
@@ -89,10 +90,33 @@ function getStopsData() {
         // Setting markers for stops
         stopMarker.setMap(my_map);
         stopMarkersArray.push(stopMarker);
+        stopId = stops.items[i]["id"];
+        getStopPredictions(stopId, stopMarker);
       }
     }
   });
 }
+
+// collects stop predictions for stop infowindow
+// var stopInfoWindow = new google.maps.InfoWindow();
+
+function getStopPredictions(sI, sM) {
+    console.log(sI);
+    google.maps.event.addListener(sM, "click", function() {
+
+        s.ajax("http://api.metro.net/agencies/lametro/stops/" + sI + "/predictions/", {
+            success: function(data) {
+                stopData = data;
+                console.log(stopData);
+            }
+        })
+    })
+}
+
+
+
+
+
 
 // var infowindow = new google.maps.InfoWindow();
 //
@@ -210,6 +234,10 @@ function initialize() {
 
   // Fits bounds of the map according to LatLngbounds of our map as defined by coordinates of existing data
   // my_map.fitBounds(bounds);
+
+  //adds traffic layer to map
+  var trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(my_map);
 
   selectRoute();
 
